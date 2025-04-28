@@ -16,7 +16,7 @@ An intelligent tutoring system that uses AI to help students learn course materi
 
 ## 🛠️ Tech Stack
 
-- **Backend**: Laravel 10
+- **Backend**: Laravel 12
 - **Frontend**: Livewire, Tailwind CSS
 - **AI**: Google Gemini API
 - **Database**: MySQL or PostgreSQL
@@ -39,7 +39,7 @@ An intelligent tutoring system that uses AI to help students learn course materi
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/yourusername/ai-course-tutor.git
+   git clone https://github.com/hibeefrosh/ai-student-chat.git
    cd ai-course-tutor
    ```
 
@@ -194,7 +194,7 @@ Contributions are welcome! 🚀
 - [Livewire](https://livewire.laravel.com)
 - [Tailwind CSS](https://tailwindcss.com)
 - [Google Gemini API](https://ai.google.dev/)
-- [All contributors](https://github.com/yourusername/ai-course-tutor/contributors)
+- [All contributors](https://github.com/hibeefrosh/ai-student-chat.git)
 
 ---
 

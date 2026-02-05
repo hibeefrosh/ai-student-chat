@@ -240,7 +240,7 @@ class AIService
     private function callAI($history, $userMessage, $context)
     {
         $apiKey = config('ai.gemini_api_key');
-        $model = config('ai.gemini_model', 'gemini-1.5-flash');
+        $model = config('ai.gemini_model', 'gemini-2.5-flash');
 
         // Log the API key (first few characters only for security)
         $maskedKey = substr($apiKey, 0, 5) . '...' . substr($apiKey, -5);
@@ -381,7 +381,7 @@ class AIService
     private function callAIWithSimpleFormat($userMessage, $context, $history, $systemPrompt)
     {
         $apiKey = config('ai.gemini_api_key');
-        $model = config('ai.gemini_model', 'gemini-1.5-flash');
+        $model = config('ai.gemini_model', 'gemini-2.5-flash');
         $apiEndpoint = "https://generativelanguage.googleapis.com/v1/models/{$model}:generateContent?key={$apiKey}";
 
         // Prepare context
@@ -546,7 +546,7 @@ class AIService
     public function testConnection()
     {
         $apiKey = config('ai.gemini_api_key');
-        $model = config('ai.gemini_model', 'gemini-1.5-flash');
+        $model = config('ai.gemini_model', 'gemini-2.5-flash');
 
         // Use the updated v1 endpoint with direct model reference
         $apiEndpoint = "https://generativelanguage.googleapis.com/v1/models/{$model}:generateContent?key={$apiKey}";

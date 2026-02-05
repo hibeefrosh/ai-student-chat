@@ -35,7 +35,7 @@ return [
     |
     */
     'gemini_api_key' => env('GEMINI_API_KEY'),
-    'gemini_model' => env('GEMINI_MODEL', 'gemini-1.5-flash'),
+    'gemini_model' => env('GEMINI_MODEL', 'gemini-2.5-flash'),
     'gemini_temperature' => env('GEMINI_TEMPERATURE', 0.7),
     'gemini_max_tokens' => env('GEMINI_MAX_TOKENS', 2000),
 

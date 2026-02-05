@@ -1,4 +1,4 @@
-<div class="flex flex-col h-screen bg-gray-100">
+<div class="flex flex-col h-screen bg-gray-100" id="student-chat-root">
     <!-- Course Header -->
     <div class="bg-white shadow-sm p-2 border-b">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
@@ -103,17 +103,10 @@
                     </div>
 
                     <div class="bg-white rounded-lg shadow p-3">
-                        <div class="flex items-center space-x-2">
-                            <div class="animate-spin h-4 w-4 text-indigo-600">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                        stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor"
-                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                                    </path>
-                                </svg>
-                            </div>
-                            <span class="text-gray-600">Generating response...</span>
+                        <div class="flex items-center gap-1.5 typing-dots">
+                            <span class="typing-dot"></span>
+                            <span class="typing-dot"></span>
+                            <span class="typing-dot"></span>
                         </div>
                     </div>
                 </div>
@@ -166,40 +159,78 @@
                 transform: translateY(0);
             }
         }
+
+        /* Typing indicator: 3 bouncing dots */
+        .typing-dots {
+            min-height: 20px;
+        }
+
+        .typing-dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: #4f46e5;
+            animation: typingBounce 1.4s ease-in-out infinite both;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: 0s; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-6px); }
+        }
     </style>
 
     <script>
-        // Auto-scroll to bottom of chat
+        // Auto-scroll to bottom of chat so the latest message is always visible
         document.addEventListener('livewire:initialized', function () {
             const chatContainer = document.getElementById('chat-messages');
             const messageInput = document.getElementById('message-input');
             const messageForm = document.getElementById('message-form');
 
             function scrollToBottom() {
-                chatContainer.scrollTop = chatContainer.scrollHeight;
+                if (chatContainer) {
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                }
             }
 
             // Initial scroll
             scrollToBottom();
 
+            // Always scroll after AI response is received (DOM has been updated)
+            Livewire.on('chat-response-received', () => {
+                setTimeout(scrollToBottom, 50);
+            });
+
             // Clear input after form submission
             messageForm.addEventListener('submit', function () {
-                // Use setTimeout to ensure this happens after Livewire processes the form
                 setTimeout(() => {
                     messageInput.value = '';
+                    scrollToBottom();
                 }, 0);
             });
 
-            // Scroll when new messages are added
-            Livewire.hook('message.processed', (message, component) => {
-                if (component.name === 'student-chat') {
+            // Scroll when Livewire re-renders (e.g. new user message)
+            Livewire.hook('morph.updated', ({ el, component }) => {
+                if (component && component.name === 'student-chat') {
                     scrollToBottom();
-
-                    // Focus back on input after sending
-                    if (!@this.isProcessing) {
-                        messageInput.focus();
-                    }
                 }
+            });
+
+            // After we show the user message + typing dots, run the AI in a second request
+            Livewire.on('start-ai-response', () => {
+                setTimeout(() => {
+                    const root = document.getElementById('student-chat-root');
+                    if (!root) return;
+                    const id = root.getAttribute('wire:id');
+                    if (id) {
+                        const comp = Livewire.find(id);
+                        if (comp) comp.call('generateAIResponse');
+                    }
+                }, 0);
             });
         });
     </script>

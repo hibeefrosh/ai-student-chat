@@ -70,7 +70,7 @@ class ListGeminiModels extends Command
                 $this->table($headers, $rows);
 
                 $this->info("\nTo use a model, set GEMINI_MODEL in your .env file to one of the model names above.");
-                $this->info("For example: GEMINI_MODEL=gemini-1.5-flash");
+                $this->info("For example: GEMINI_MODEL=gemini-2.5-flash");
             } else {
                 $this->warn("No models found in response");
                 return 1;

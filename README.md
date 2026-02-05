@@ -73,7 +73,7 @@ An intelligent tutoring system that uses AI to help students learn course materi
 
    ```env
    GEMINI_API_KEY=your_api_key_here
-   GEMINI_MODEL=gemini-1.5-flash
+   GEMINI_MODEL=gemini-2.5-flash
    ```
 
 6. **Run migrations and seed the database**

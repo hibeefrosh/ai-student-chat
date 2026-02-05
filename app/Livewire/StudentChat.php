@@ -20,6 +20,9 @@ class StudentChat extends Component
     public $messages = [];
     public $isProcessing = false;
 
+    /** Pending user message for the follow-up AI request (not persisted to DB) */
+    public $pendingUserMessage = null;
+
     public function mount(Course $course)
     {
         $this->course = $course;
@@ -54,28 +57,37 @@ class StudentChat extends Component
             return;
         }
 
-        // Store message locally before clearing input
         $userMessage = trim($this->message);
-
-        // Reset input field immediately
         $this->reset('message');
 
-        $this->isProcessing = true;
-
-        // Save user message to database
+        // Save user message so it shows immediately
         $this->chatSession->messages()->create([
             'role' => 'user',
             'content' => $userMessage,
         ]);
 
-        // Reload messages to show user message immediately
         $this->loadMessages();
+        $this->pendingUserMessage = $userMessage;
+        $this->isProcessing = true;
 
-        // Generate AI response
+        // Return now so the UI shows the user message + typing dots.
+        // Front end will call generateAIResponse() in a separate request.
+        $this->dispatch('start-ai-response');
+    }
+
+    public function generateAIResponse()
+    {
+        if (empty($this->pendingUserMessage)) {
+            $this->isProcessing = false;
+            return;
+        }
+
+        $userMessage = $this->pendingUserMessage;
+        $this->pendingUserMessage = null;
+
         $aiService = app(AIService::class);
         $response = $aiService->generateResponse($this->chatSession, $userMessage);
 
-        // Save AI response
         $this->chatSession->messages()->create([
             'role' => 'assistant',
             'content' => $response['content'],
@@ -85,6 +97,7 @@ class StudentChat extends Component
 
         $this->isProcessing = false;
         $this->loadMessages();
+        $this->dispatch('chat-response-received');
     }
 
     public function updateNickname()
